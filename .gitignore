@@ -1,0 +1,5 @@
+env/
+.vscode
+__pycache__
+files_to_parse
+parsed_files
