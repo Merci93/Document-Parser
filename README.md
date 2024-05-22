@@ -41,4 +41,4 @@ pip install -r requirements.txt
 python3 src/parse_all.py
 ```
 
->>> NOTE: The files (Word or PDF) must be in the directory `files_to_parse`.
+>>> NOTE: The files to be parsed (Word or PDF) must be in the directory `files_to_parse`.
