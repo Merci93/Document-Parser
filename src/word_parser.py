@@ -54,8 +54,9 @@ class WordParser(DocumentParser):
                 except IndexError:
                     pass
         log.info(f"Extracted TOC with {len(table_of_content)} titles.")
-        toc_df = pandas.DataFrame(table_of_content, columns=["title", "page_number"])
-        toc_df.to_csv(os.path.join(final_directory, f"{self.document_name}.csv"), index=False)
+        if len(table_of_content) > 0:
+            toc_df = pandas.DataFrame(table_of_content, columns=["title", "page_number"])
+            toc_df.to_csv(os.path.join(final_directory, f"{self.document_name}.csv"), index=False)
         self.counters['toc'] = len(table_of_content)
     
     def extract_images(self) -> None:
