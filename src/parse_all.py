@@ -1,4 +1,6 @@
-"""Function responsible for parsing all available documents."""
+"""
+Function responsible for parsing all available documents.
+"""
 import csv
 import os
 
@@ -30,7 +32,7 @@ def parse_all_documents(
     extracted elements counters, and the second contains image titles extracted from each document.
     """
     os.makedirs(output_directory, exist_ok=True)
-    
+
     counters = []
     images = []
     for document_name in tqdm(os.listdir(input_directory)):

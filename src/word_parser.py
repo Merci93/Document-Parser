@@ -23,11 +23,11 @@ from logger import log
 
 class WordParser(DocumentParser):
     """A class responsible for reading and parsing word documents."""
-    
+
     def __init__(self, document_path: str, output_directory: str = None) -> None:
         """
         Open Word document.
-        
+
         As for different purposes two independent parsing libraries are used: docx (python-docx) and docx2txt,
         both parsers are loaded here.
 
@@ -37,7 +37,7 @@ class WordParser(DocumentParser):
         super().__init__(document_path, output_directory)
         self.document_docx = Document(document_path)
         self.document_docx2txt = docx2txt.process(document_path)
-    
+
     def extract_table_of_content(self) -> None:
         """Extract table of content from Word document."""
         final_directory = os.path.join(self.output_directory, settings.extracted_table_of_content)
@@ -58,13 +58,13 @@ class WordParser(DocumentParser):
             toc_df = pandas.DataFrame(table_of_content, columns=["title", "page_number"])
             toc_df.to_csv(os.path.join(final_directory, f"{self.document_name}.csv"), index=False)
         self.counters['toc'] = len(table_of_content)
-    
+
     def extract_images(self) -> None:
         """Extract images with figure labels from document and save them."""
         log.info("Extracting images...")
         final_directory = os.path.join(self.output_directory, settings.extracted_images)
         os.makedirs(final_directory, exist_ok=True)
-        
+
         def found_image_with_title(paragraph: docx.text.paragraph) -> docx.ImagePart | bool:
             """Extract image blob data and rId from paragraph xml data."""
             for run in paragraph.runs:
@@ -75,7 +75,7 @@ class WordParser(DocumentParser):
                         return image
                     except UnrecognizedImageError:
                         return False
-                    
+
         def save_image(figure_match: re, data: dict, image: docx.ImagePart, counter: int) -> dict:
             """Save extracted image."""
             save_as = f"{self.document_name}_{figure_match.group(1)}{counter}.png"
@@ -98,7 +98,7 @@ class WordParser(DocumentParser):
                     }
                 )
                 return data
-        
+
         extracted_images = []
         image_titles = []
         paragraph = self.document_docx.paragraphs
@@ -109,7 +109,7 @@ class WordParser(DocumentParser):
                 if prev_paragraph.text.startswith("Figure ") and "Caption" in prev_paragraph.style.name:
                     image_titles.append(prev_paragraph.text)
                     extracted_images.append(found_image_with_title(paragraph[i]))
-                
+
                 elif prev_paragraph.text == "":
                     for j in range(2, 4):
                         prev_paragraph = paragraph[i - j]
@@ -117,11 +117,11 @@ class WordParser(DocumentParser):
                             image_titles.append(prev_paragraph.text)
                             extracted_images.append(found_image_with_title(paragraph[i]))
                             break
-                    
+
                 elif next_paragraph.text.startswith("Figure ") and "Caption" in next_paragraph.style.name:
                     image_titles.append(next_paragraph.text)
                     extracted_images.append(found_image_with_title(paragraph[i]))
-        
+
         counter = 0
         image_data = []
         zipped_file = dict(zip(image_titles, extracted_images))
@@ -150,13 +150,13 @@ class WordParser(DocumentParser):
         log.info(f"...done. Successfully extracted {counter} images.")
         self.counters["images"] = counter
         self.image_data = image_data
-    
+
     def extract_tables(self) -> None:
         """Extract tables from Word document and save them."""
         log.info("Extracting tables...")
         final_directory = os.path.join(self.output_directory, settings.extracted_tables)
         os.makedirs(final_directory, exist_ok=True)
-        
+
         table_titles = []
         name_space = {"w": "http://schemas.openxmlformats.org/wordprocessingml/2006/main"}
         for idx, element in enumerate(self.document_docx.element.body):
@@ -167,7 +167,7 @@ class WordParser(DocumentParser):
                     tags.append(wt_tag.text)
                 table_title = "".join(tags)
                 table_titles.append(table_title)
-                
+
         tables = self.document_docx.tables
         extracted_tables = []
         for idx, table in enumerate(tables, start=1):
@@ -176,7 +176,7 @@ class WordParser(DocumentParser):
                 row_text = [cell.text.strip() for cell in row.cells]
                 extracted_table.append(row_text)
             extracted_tables.append(extracted_table)
-            
+
         zip_table_title = dict(zip(table_titles, extracted_tables))
         counter = 0
         for title, table in zip_table_title.items():
@@ -193,12 +193,13 @@ class WordParser(DocumentParser):
                 df.to_csv(os.path.join(final_directory, save_as), index=False)
         log.info(f"...done. Successfully extracted {counter} tables.")
         self.counters['tables'] = counter
-    
+
     def extract_texts(self) -> None:
         """Extract text from Word document and save as CSV file."""
         log.info("Extracting text...")
         final_directory = os.path.join(self.output_directory, settings.extracted_texts)
         os.makedirs(final_directory, exist_ok=True)
+
         extracted_sentences = []
         for paragraph in self.document_docx.paragraphs:
             text = paragraph.text
@@ -228,8 +229,10 @@ class WordParser(DocumentParser):
         self.counters['paragraphs'] = len(headers)
 
 
-def parse_all_word_documents(input_directory: str = settings.file_location,
-                             output_directory: str = settings.parsed_data_directory) -> None:
+def parse_all_word_documents(
+    input_directory: str = settings.file_location,
+    output_directory: str = settings.parsed_data_directory,
+    ) -> None:
     """Parse all pdf documents that exist in input_directory and save results to output_directory."""
     image_counter = []
     table_counter = []
@@ -247,10 +250,10 @@ def parse_all_word_documents(input_directory: str = settings.file_location,
             log.info(f"{document} successfully processed.")
         else:
             log.info(f"Skipping not a word document {document}.")
-    with open(os.path.join(output_directory, "word_doc_image_report.csv"), "w", newline="") as image_report_csvfile:
-        csv.writer(image_report_csvfile).writerows(image_counter)
-    with open(os.path.join(output_directory, "word_doc_table_report.csv"), "w", newline="") as table_report_csvfile:
-        csv.writer(table_report_csvfile).writerows(table_counter)
+    with open(os.path.join(output_directory, "word_doc_image_report.csv"), "w", newline="") as image_report_file:
+        csv.writer(image_report_file).writerows(image_counter)
+    with open(os.path.join(output_directory, "word_doc_table_report.csv"), "w", newline="") as table_report_file:
+        csv.writer(table_report_file).writerows(table_counter)
 
 
 if __name__ == "__main__":
