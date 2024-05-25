@@ -6,12 +6,12 @@ import csv
 import os
 import re
 
-from docx import Document
-from docx.image.exceptions import UnrecognizedImageError
-from docx.opc.exceptions import PackageNotFoundError
 import docx
 import docx2txt
 import pandas
+from docx import Document
+from docx.image.exceptions import UnrecognizedImageError
+from docx.opc.exceptions import PackageNotFoundError
 from unidecode import unidecode
 from xml.etree import ElementTree as ET
 from zipfile import BadZipFile
