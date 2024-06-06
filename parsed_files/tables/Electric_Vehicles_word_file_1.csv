@@ -1,0 +1,9 @@
+Table 1: EV’s Parameters to Calculate the Power Consumption Profile,
+Parameters,Values
+"Vehicle weight (including driver), m  [kg]",1266
+"Rolling resistance coefficient,",0.006
+"Aerodynamic resistance coefficient, k	[kg/m]",1.30
+"Product of armature constant and magnetic flux,",10.08
+"Resistance of motor (in general), r [Ω]",0.11
+"Radius of tire, R [m]",0.50
+"Transmission efficiency, η [%]",95

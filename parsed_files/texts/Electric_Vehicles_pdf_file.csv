@@ -1,0 +1,153 @@
+heading,text,page_number
+ABSTRACT: ,"Use of electric vehicles (EVs) has been viewed by many as a way to significantly reduce US oil dependence, 
+operate vehicles more efficiently, and reduce carbon emissions. Due to the potential benefits of EVs, the 
+federal and local governments have allocated considerable funding and taken a number of legislative and 
+regulatory steps to promote EV deployment and adoption. With this momentum, it is not difficult to see that 
+in the near future EVs will gain a significant market penetration, particularly in densely populated urban areas 
+with systemic air quality problems. We will soon face one of the biggest challenges: How to improve 
+efficiency for the entire EV system? This research takes the first step in tackling this challenge by addressing 
+a fundamental issue, how to measure and estimate EVs' energy consumption. In detail, this paper first presents 
+a system which can collect in-use EV data from both the battery system, including battery state of charge, 
+pack current, pack voltage, pack power and vehicle driving data including velocity, acceleration, and vehicle 
+position (latitude, longitude, and elevation). Then this system has been installed in an EV conversion vehicle 
+built for this research. Approximately five months of EV data have been collected and these data have been 
+used to analyze both EV performance and driver behaviors. The analysis shows that the EV is more efficient 
+when driving on incity routes than driving on freeway routes. This has become one of the major reasons that 
+EV driver prefers in-city routes over freeway routes. This research further analyses the relationships among 
+the EV's power use, the vehicle's velocity, acceleration, and the roadway grade. This is done by categorizing 
+data according to the specific ranges of velocity, acceleration, and roadway grade. In addition, through 
+statistical analysis, we determined that the EV's power within a specific range of velocity, acceleration, and 
+grade could be described as a normal distribution. Based on the analysis presented, this paper further proposes 
+an analytical EV power estimation model using the fundamental theory of vehicle dynamics and basic 
+relationships among power, force, torque, voltage, and current. This model has been evaluated using the test 
+vehicle. The results show that this model can successfully estimate EV's instantaneous power and trip energy 
+consumption. Future research will focus on applying the proposed EV power estimation model to improve 
+EVs' energy efficiency.  ",1
+1. INTRODUCTION ,"The transportation system is fundamental to the health of the nation's economic growth. However, the current 
+transportation system is overwhelmingly powered by internal combustion engines (ICE) fueled by petroleum. 
+This not only causes the nation be dependent on the whims of the global oil market
+[15]
+; but more importantly, 
+has made the transportation sector the economy's largest source of greenhouse gas (GHG) emissions
+[9]
+. 
+Because of projected shortage of crude oil and the urgent need of reducing GHG emissions, more and more 
+national talents and resources are now focusing on shaping a sustainable transportation system that can 
+address 
+the 
+climate 
+change 
+challenge 
+as 
+well 
+as 
+reduce 
+oil 
+dependence
+[22]
+. 
+Among 
+many 
+innovative 
+technologies, electrification of passenger vehicles is viewed by many as one that could significantly reduce 
+US oil dependence, operate vehicles more efficiently, and reduce carbon emissions.  
+Electric vehicles (EVs) include both plug-in hybrid (PHEVs) and battery-powered electric vehicles (BEVs). 
+PHEVs usually have a moderately sized energy storage system and an internal combustion engine to ensure 
+most miles are electrified while retaining the range capability of today's ICE vehicles. BEVs are entirely 
+battery dependent and provide complete petroleum displacement for certain vehicle sectors. This research 
+mainly focuses on BEV (simplified as EV for the rest of the paper). EV adoption could play a significant role 
+in addressing both energy and environmental crises brought by the current transportation system. First, 
+electricity will help meet future U.S. transportation needs. Since the vast majority of electric generation 
+resources are domestic, electric vehicles are viewed as an excellent way to diversify transportation fuels. 
+Although some challenges remain in regard to cost and battery technology, the availability of domestic 
+electricity is not an issue so long as vehicles are charged at night, when excess electric generating capacity is 
+available
+[15]
+. In addition, fueling EVs is far less expensive than fueling ICE vehicles. With the national average 
+price of residential electricity at approximately 11.5 cents per kilowatt hour, a vehicle that runs only on 
+electricity can travel approximately 30 miles on about 80 cents of electricity - almost one fourth of the cost 
+of driving a similarly equipped ICE vehicle at $3 a gallon for gasoline
+[1]
+. Second, electricity has a strong 
+potential for GHG reduction. Electric vehicles themselves have zero emissions, although generating the 
+electricity to power the vehicle is likely to create air pollution. If electricity is generated from the current U.S. 
+average generation mix, EVs can reduce GHG emissions by about 33 percent, compared to today's ICE 
+powered vehicles
+[22]
+. If we assume 56 percent light duty vehicle (LDV) penetration by 2050, this could 
+provide a total reduction in transportation emissions of 26 to 30 percent
+[22]
+.   
+The huge potential benefits of EVs have already generated significant interest and investment in EV 
+technology. Since late 2010, more than 20 automakers have introduced BEVs or PHEVs. Within the United 
+States, the government allocated considerable stimulus funding to promote the use of alternative fuels
+[18]
+. The 
+American Recovery and Reinvestment Act (ARRA) of 2009 provided over $2 billion for electric vehicle and 
+battery technologies, geared toward achieving a goal of one million electric vehicles on U.S. roads by 2015
+[3]. 
+Many states also have committed themselves to promoting EVs. For example, California has taken a number 
+of legislative and regulatory steps to promote electric vehicle deployment and adoption, such as the Zero 
+Emission Vehicle and Low Carbon Fuel Standard regulatory programs and rebates for purchasing electric 
+vehicles
+[6]
+. These actions 
+demonstrate 
+the 
+state's 
+commitment 
+to 
+promote 
+electric 
+vehicles. With 
+this 
+momentum, it is not difficult to see that in the near future EVs may gain significant market penetration, 
+particularly in densely populated urban areas with systemic air quality problems. We will soon face one of 
+the biggest challenges: How to improve efficiency for the whole EV system?  
+The majority of current EV research is focused on how to overcome technical barriers such as battery 
+technology limitations
+[2]
+ and charging infrastructure problems
+[13]
+. Extensive research efforts and investments 
+have been given to address these barriers
+[5,7,10,11,14,17,19,20]
+. However, very little research has been focused on 
+how to improve the efficiency of the EV system. People have yet to realize the importance of this question, 
+partly because they haven't foreseen the oncoming growth worldwide for EVs; but more importantly, due to 
+lack of knowledge of electric vehicle performance and drivers' behaviors.  We have yet to identify the unique 
+features of both EVs and EV drivers that control energy consumption and efficiency. These unique features 
+could fundamentally change our understanding of people's travel and driving behaviors and further impact 
+the transportation system, our environment, and our society. This research begins to explore these features 
+starting by investigating EVs' energy usage measurement and estimation. 
+Measuring and estimating EVs' electricity usage is the foundation for the future improvement of energy 
+efficiency of the EV system. One of the most advanced features of an EV, compared to conventional ICE 
+vehicles, is its ability to capture and store energy through the regenerative braking system (RBS)
+[4,23,24]
+. RBS 
+uses the electric motor to recharge the battery by applying negative torque to the drive wheels and converting 
+kinetic energy to electrical energy. The use of RBS in EVs' fundamentally changes their energy consumption 
+characteristics compared to ICE vehicles. For example, EVs are much more efficient when driving on 
+interrupted urban routes than uninterrupted freeway
+[12]
+. This is in contrast to conventional ICE vehicles, which 
+require much more energy in urban driving because of braking and thermal losses
+[8,16]
+. This characteristic 
+could significantly change driving behaviors and travel behaviors in order to save energy. The unique 
+characteristics of EVs needs to be carefully investigated; and the first requirement of this investigation is the 
+ability to measure and estimate EVs' energy usage, which, as will be demonstrated in the paper, is a function 
+of vehicle's velocity, acceleration, and roadway grade.  
+Fig. 1 Electric Vehicles and Batteries 
+Fig. 2 Data Collection System Architecture 
+Based on the values in Table 1, we use Eq.11 to calculate instantaneous power. The control variables are EV's 
+velocity, acceleration, and roadway grade. Vehicle velocity and acceleration time histories were taken directly 
+from the data collection system. Elevation and grade information was manually collected from Google earth. 
+With these input values as a function of time, we calculated EV power using Eq.11. We then compare this 
+calculated power with the measured power.  Fig.10 presents an example based on a trip on Dec. 03, 2012. As 
+we can see from the figure, the purple line, which represents estimated EV power, closely follows the green 
+line, which is the measured EV power. This shows the accuracy of our simple estimation model. We also 
+include vehicle velocity and acceleration information indicated by light pink and light blue lines respectively 
+as shown in the figure. Interestingly, we can see that the changes of power follow the trend of the change of 
+acceleration closely.  
+Fig. 3 Measured power vs. estimated power",1
