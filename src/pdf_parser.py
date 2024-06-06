@@ -101,14 +101,15 @@ class PdfParser(DocumentParser):
                             title_match = re.match(r"^(Figure\s+\d+)(?:[\s:-])-?(.*)", title_text)
                             figure_number = title_match.group(1)
                             save_as = f"{self.document_name}_{page_number}_{figure_number}.png"
-                            figure_data = {"document_name": self.document_name,
-                                           "document_type": "pdf",
-                                           "figure_number": figure_number,
-                                           "figure_title": title_match.group(2).strip(),
-                                           "page_number": page_number,
-                                           "image_filename": save_as,
-                                           "extracted_image": "No. Image on a different page"
-                                           }
+                            figure_data = {
+                                "document_name": self.document_name,
+                                "document_type": "pdf",
+                                "figure_number": figure_number,
+                                "figure_title": title_match.group(2).strip(),
+                                "page_number": page_number,
+                                "image_filename": save_as,
+                                "extracted_image": "No. Image on a different page"
+                            }
                             text_match = r"^[A-Za-z0-9].*"
                             prev_block = text_blocks[idx - 1]["lines"][0]["spans"][0]
                             is_prev_text = re.match(text_match, prev_block["text"])
@@ -124,13 +125,23 @@ class PdfParser(DocumentParser):
                             if prev_bbox.x1 - title_bbox.x0 > 80 and not is_prev_text:
                                 prev_block = text_blocks[idx - 1]["lines"][0]["spans"][0]
                                 prev_bbox = fitz.Rect(prev_block["bbox"])
-                                img_bbox = fitz.Rect(-title_bbox.x1, -title_bbox.y1, prev_bbox.x1, prev_bbox.y1)
+                                img_bbox = fitz.Rect(
+                                    -title_bbox.x1,
+                                    -title_bbox.y1,
+                                    prev_bbox.x1,
+                                    prev_bbox.y1,
+                                )
                                 save_image(save_as, final_directory, img_bbox)
                                 image_data[-1]["extracted_image"] = "Yes"
                                 counter += 1
 
                             elif next_bbox.x1 - title_bbox.x0 > 80:
-                                img_bbox = fitz.Rect(title_bbox.x0 - 5, title_bbox.y0 + 12, next_bbox.x1, next_bbox.y1)
+                                img_bbox = fitz.Rect(
+                                    title_bbox.x0 - 5,
+                                    title_bbox.y0 + 12,
+                                    next_bbox.x1,
+                                    next_bbox.y1,
+                                )
                                 save_image(save_as, final_directory, img_bbox)
                                 image_data[-1]["extracted_image"] = "Yes"
                                 counter += 1
@@ -140,8 +151,12 @@ class PdfParser(DocumentParser):
                                     next_block = text_blocks[idx + j]["lines"][0]["spans"][0]
                                     next_bbox = fitz.Rect(next_block["bbox"])
                                     if next_bbox.x1 - title_bbox.x0 > 80 and next_block["text"] == " ":
-                                        img_bbox = fitz.Rect(title_bbox.x0 - 5, title_bbox.y0 + 15,
-                                                             next_bbox.x1, next_bbox.y1)
+                                        img_bbox = fitz.Rect(
+                                            title_bbox.x0 - 5,
+                                            title_bbox.y0 + 15,
+                                            next_bbox.x1,
+                                            next_bbox.y1,
+                                        )
                                         save_image(save_as, final_directory, img_bbox)
                                         image_data[-1]["extracted_image"] = "Yes"
                                         counter += 1
@@ -158,12 +173,15 @@ class PdfParser(DocumentParser):
         counter = 0
         log.info("Extracting tables...")
         for page in self.document_plumber.pages:
-            table_objects = page.find_tables(table_settings={"vertical_strategy": "lines",
-                                                             "horizontal_strategy": "lines",
-                                                             "intersection_x_tolerance": 2,
-                                                             "snap_tolerance": 8,
-                                                             "join_tolerance": 40,
-                                                             })
+            table_objects = page.find_tables(
+                table_settings={
+                    "vertical_strategy": "lines",
+                    "horizontal_strategy": "lines",
+                    "intersection_x_tolerance": 2,
+                    "snap_tolerance": 8,
+                    "join_tolerance": 40,
+                }
+            )
             for table_counter, table in enumerate(table_objects, start=1):
                 extract_table = table.extract()
                 header = extract_table[0]
@@ -221,13 +239,18 @@ class PdfParser(DocumentParser):
         extracted_sentences = []
         for page in self.document_plumber.pages:
             try:
-                bounding_boxes = [table.bbox
-                                  for table in page.find_tables(table_settings=get_table_settings("explicit"))]
+                bounding_boxes = [
+                    table.bbox for table in page.find_tables(table_settings=get_table_settings("explicit"))
+                ]
             except ValueError:
-                bounding_boxes = [table.bbox for table in page.find_tables(table_settings=get_table_settings("lines"))]
-            sentence_lines = page.filter(not_within_bboxes).extract_words(keep_blank_chars=True,
-                                                                          use_text_flow=True,
-                                                                          extra_attrs=["fontname", "size"])
+                bounding_boxes = [
+                    table.bbox for table in page.find_tables(table_settings=get_table_settings("lines"))
+                ]
+            sentence_lines = page.filter(not_within_bboxes).extract_words(
+                keep_blank_chars=True,
+                use_text_flow=True,
+                extra_attrs=["fontname", "size"],
+            )
             for sentence in sentence_lines:
                 text = unidecode(sentence["text"])
                 font_type = sentence["fontname"]
@@ -249,8 +272,10 @@ class PdfParser(DocumentParser):
                     and (not table_of_content_2)
                     ):
                     extracted_sentences.append((text, page.page_number, font_type, is_bold, font_size_))
-        text_data_frame = pandas.DataFrame(extracted_sentences, columns=["text", "page_number", "font_type",
-                                                                         "is_bold", "font_size"])
+        text_data_frame = pandas.DataFrame(
+            extracted_sentences,
+            columns=["text", "page_number", "font_type", "is_bold", "font_size"],
+        )
         headers = []
         body_text = []
         page_num = []
@@ -273,8 +298,10 @@ class PdfParser(DocumentParser):
         self.counters['paragraphs'] = len(headers)
 
 
-def parse_all_pdf_documents(input_directory: str = settings.file_location,
-                            output_directory: str = settings.parsed_data_directory) -> None:
+def parse_all_pdf_documents(
+    input_directory: str = settings.file_location,
+    output_directory: str = settings.parsed_data_directory,
+    ) -> None:
     """Parse all pdf documents that exist in input_directory and save results to output_directory."""
     for document in os.listdir(input_directory):
         if document.endswith("pdf"):

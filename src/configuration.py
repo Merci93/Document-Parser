@@ -2,8 +2,8 @@ from pydantic_settings import BaseSettings
 
 
 class Settings(BaseSettings):
-    file_location: str = "../files_to_parse"
-    parsed_data_directory: str = "../parsed_files"
+    file_location: str = "files_to_parse"
+    parsed_data_directory: str = "parsed_files"
     extracted_images: str = "images"
     extracted_images_file_name: str = "images.csv"
     extracted_table_of_content: str = "table_of_content"

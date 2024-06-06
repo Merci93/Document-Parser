@@ -1,6 +1,6 @@
 # Document_Parser
 Scripts to parse PDF and Word documents.
-Documents are parsed and saved in separate folders `images`, `tables`, `table of contents` and `texts` in a parent directory `parsed_files`.
+This repository contains the modules developed to parse PDF and Word documents, extracting Table of Contents, Images, texts, and tables. The extracted data are parsed and saved in separate folders `images`, `tables`, `table of contents` and `texts` in a parent directory `parsed_files` and a csv file generated with reports of extracted data from each document.
 
 # Local Setup
 ### Windows
