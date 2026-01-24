@@ -1,0 +1,4 @@
+[project.scripts]
+doc-parser = "cli:main"
+doc-parser-cli = "cli:main"
+[build-system]
