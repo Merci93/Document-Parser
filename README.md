@@ -39,3 +39,6 @@ python cli.py parse --input <folder_with_files_to_parse> --output <output_direct
 
 ## test logs
 ![](img/tests.png)
+
+
+# TODO - fix image extraction
