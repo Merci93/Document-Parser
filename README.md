@@ -33,3 +33,9 @@ Using command line:
 python cli.py parse --input <folder_with_files_to_parse> --output <output_directory>
 ```
 
+## Parsing log
+![](img/sample-execution-log.png)
+
+
+## test logs
+![](img/tests.png)
