@@ -16,9 +16,9 @@ from unidecode import unidecode
 from xml.etree import ElementTree as ET
 from zipfile import BadZipFile
 
-from configuration import settings
-from document_parser import DocumentParser
-from logger import log
+from document_parser.config.configuration import settings
+from document_parser.core.document_parser import DocumentParser
+from document_parser.utils.logger import log
 
 
 class WordParser(DocumentParser):
@@ -106,19 +106,22 @@ class WordParser(DocumentParser):
             if "graphicData" in paragraph[i]._p.xml:
                 prev_paragraph = paragraph[i - 1]
                 next_paragraph = paragraph[i + 1]
-                if prev_paragraph.text.startswith("Figure ") and "Caption" in prev_paragraph.style.name:
+                if (prev_paragraph.text.lower().startswith(("figure ", "fig.", "fig "))
+                    and prev_paragraph.style.name in settings.image_title_styles):
                     image_titles.append(prev_paragraph.text)
                     extracted_images.append(found_image_with_title(paragraph[i]))
 
                 elif prev_paragraph.text == "":
                     for j in range(2, 4):
                         prev_paragraph = paragraph[i - j]
-                        if prev_paragraph.text.startswith("Figure ") and "Caption" in prev_paragraph.style.name:
+                        if (prev_paragraph.text.lower().startswith(("figure ", "fig.", "fig "))
+                            and prev_paragraph.style.name in settings.image_title_styles):
                             image_titles.append(prev_paragraph.text)
                             extracted_images.append(found_image_with_title(paragraph[i]))
                             break
 
-                elif next_paragraph.text.startswith("Figure ") and "Caption" in next_paragraph.style.name:
+                elif (next_paragraph.text.startswith(("figure ", "fig.", "fig "))
+                      and next_paragraph.style.name in settings.image_title_styles):
                     image_titles.append(next_paragraph.text)
                     extracted_images.append(found_image_with_title(paragraph[i]))
 
@@ -128,8 +131,14 @@ class WordParser(DocumentParser):
         for title, image in zipped_file.items():
             counter += 1
             title = unidecode(title.strip())
-            figure_title = re.match(r"^(Figure\s+\d+(?:[:\.-]\d+)?)\s*(.*)", title)
-            figure_title_part = re.match(r"^(Figure\s+)(?:[\s:-])-?(.*)", title)
+            figure_title = re.match(
+                r"^(figure\s?+\d+(?:[:\.-]\d+)?)\s*(.*) | ^(fig\.?\s?+\d+(?:[:\.-]\d+)?)\s*(.*)",
+                title.lower()
+            )
+            figure_title_part = re.match(
+                r"^(figure\s?+)(?:[\s:-])-?(.*) | ^(fig\.?\s?+)(?:[\s:-])-?(.*)",
+                title.lower()
+            )
             data = {
                 "document_name": self.document_name,
                 "document_type": "Word",

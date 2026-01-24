@@ -2,7 +2,7 @@
 
 import os
 
-from logger import log
+from document_parser.utils.logger import log
 
 
 class DocumentParser:

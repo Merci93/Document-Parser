@@ -6,10 +6,10 @@ import os
 
 from tqdm import tqdm
 
-from configuration import settings
-from logger import log
-from pdf_parser import PdfParser
-from word_parser import WordParser
+from document_parser.config.configuration import settings
+from document_parser.utils.logger import log
+from document_parser.parser.pdf_parser import PdfParser
+from document_parser.parser.word_parser import WordParser
 
 
 def parse_all_documents(

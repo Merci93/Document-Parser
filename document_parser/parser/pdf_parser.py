@@ -9,9 +9,9 @@ import pandas
 import pdfplumber
 from unidecode import unidecode
 
-from configuration import settings
-from document_parser import DocumentParser
-from logger import log
+from document_parser.config.configuration import settings
+from document_parser.core.document_parser import DocumentParser
+from document_parser.utils.logger import log
 
 
 class PdfParser(DocumentParser):
@@ -64,8 +64,9 @@ class PdfParser(DocumentParser):
             except IndexError:
                 log.warning("No table of content found.")
         log.info(f"Extracted TOC with {len(table_of_content)} titles.")
-        toc_df = pandas.DataFrame(table_of_content, columns=["title", "page_number"])
-        toc_df.to_csv(os.path.join(final_directory, f"{self.document_name}.csv"), index=False)
+        if len(table_of_content) > 0:
+            toc_df = pandas.DataFrame(table_of_content, columns=["title", "page_number"])
+            toc_df.to_csv(os.path.join(final_directory, f"{self.document_name}.csv"), index=False)
         self.counters['toc'] = len(table_of_content)
 
     def extract_images(self) -> None:
@@ -92,13 +93,19 @@ class PdfParser(DocumentParser):
                 try:
                     for i in range(len(block["lines"]) + 1):
                         figure_block = block["lines"][i]["spans"][0]
-                        figure_match = re.match(r"^Figure\s+\d+(?:[\s:-].*)?", figure_block["text"].strip())
+                        figure_match = re.match(
+                            r"^figure\s+\d+(?:[\s:-].*)? | ^fig\.?\s+\d+(?:[\s:-].*)?",
+                            figure_block["text"].strip().lower()
+                        )
                         font_type = figure_block["font"]
                         if "lines" in block and figure_match and "Bold" in font_type:
                             title_block = block["lines"][i]["spans"][0]
                             title_bbox = fitz.Rect(title_block["bbox"])
                             title_text = title_block["text"].strip()
-                            title_match = re.match(r"^(Figure\s+\d+)(?:[\s:-])-?(.*)", title_text)
+                            title_match = re.match(
+                                r"^(figure\s+\d+)(?:[\s:-])-?(.*) | ^(fig\.?\s+\d+)(?:[\s:-])-?(.*)",
+                                title_text.lower()
+                            )
                             figure_number = title_match.group(1)
                             save_as = f"{self.document_name}_{page_number}_{figure_number}.png"
                             figure_data = {
@@ -170,6 +177,7 @@ class PdfParser(DocumentParser):
         """Extract tables from PDF document and save them."""
         final_directory = os.path.join(self.output_directory, settings.extracted_tables)
         os.makedirs(final_directory, exist_ok=True)
+
         counter = 0
         log.info("Extracting tables...")
         for page in self.document_plumber.pages:
@@ -259,7 +267,7 @@ class PdfParser(DocumentParser):
                 if "bold" in font_type.lower():
                     is_bold = True
                 table_title = re.match(r"^Table\s+\d+", text)
-                figure_title = re.match(r"^Figure\s+\d+", text)
+                figure_title = re.match(r"^Figure\s+\d+ | ^Fig\s+\d+ | ^Fig.\s+\d+", text)
                 page_marker = re.match(r"^Page\s+\d+", text)
                 table_of_content_1 = re.match(r"^[\w\s]+\.+\s+\d+$", text)
                 table_of_content_2 = re.match(r"^(\d+(?:\.\d+)*)\.?\s+(.+)\d$", text)
