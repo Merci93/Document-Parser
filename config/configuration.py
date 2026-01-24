@@ -10,6 +10,7 @@ class Settings(BaseSettings):
     extracted_tables: str = "tables"
     extracted_texts: str = "texts"
     parse_report: str = "parse_report.csv"
+    image_title_styles: list = ["Caption", "Normal"]
 
 
 def init_settings() -> None:
