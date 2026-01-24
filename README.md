@@ -1,44 +1,35 @@
 # Document_Parser
-Scripts to parse PDF and Word documents.
-This repository contains the modules developed to parse PDF and Word documents, extracting Table of Contents, Images, texts, and tables. The extracted data are parsed and saved in separate folders `images`, `tables`, `table of contents` and `texts` in a parent directory `parsed_files` and a csv file generated with reports of extracted data from each document.
+## Overview
+Document Parser is a Python-based utility designed to extract structured content from PDF and Word documents in a consistent, automated way.
+The project supports parsing multiple document types, centralizes configuration, and provides logging to aid troubleshooting and operational visibility.
+The extracted data are parsed and saved in separate folders `images`, `tables`, `table of contents` and `texts` in a parent directory `parsed_files` and
+a csv file generated with reports of extracted data from each document.
 
-# Local Setup
-### Windows
+It is well-suited for:
+- Batch document processing
+- Data extraction pipelines
+- Preprocessing documents for analytics or ingestion into downstream systems
+
+
+## Local Setup
+1. Clone and setup repository.
 ```
 git clone https://github.com/Merci93/Document_Parser
 
 cd Document_Parser
-
-mkdir files_to_parse
 
 python -m venv env
 
 env/Scripts/activate
 
-python.exe -m pip install --upgrade pip
-
 pip install -r requirements.txt
-
-python src/parse_all.py
 ```
 
-### Linux / MacOS
+2. Update ``configuration.py`` as needed by either changing the input and output file paths, or leade as is and create the directories and add files in ```files_to_parse```
+3. Execute by either running: ```python -m scripts.parse_all``` or use the command line and pass the source path and final directories as inputs.
+
+Using command line:
 ```
-git clone https://github.com/Merci93/Document_Parser
-
-cd Document_Parser
-
-mkdir files_to_parse
-
-python -m venv env
-
-source env/bin/activate
-
-pip install --upgrade pip
-
-pip install -r requirements.txt
-
-python3 src/parse_all.py
+python cli.py parse --input <folder_with_files_to_parse> --output <output_directory>
 ```
 
->>> NOTE: The files to be parsed (Word or PDF) must be in the directory `files_to_parse`.
